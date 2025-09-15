@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Button,
   StyleSheet,
   Text,
@@ -14,7 +15,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
-    const API = "http://192.170.0.129:3000/api";
+    const API = "http://192.168.100.109:3000/api";
     const URL = `${API}/user`;
     setLoading(true);
 
@@ -32,6 +33,37 @@ export default function App() {
     }
   };
 
+  const postData = async () => {
+    const API = "http://192.168.100.109:3000/api";
+    const URL = `${API}/user`;
+    setLoading(true);
+
+    //Se orientar pelo servidor quais dados obrigatórios devem ser enviados
+    body = { username: "Graziani01", email: "graziani01@etec.sp.gov.br" };
+
+    //Padrão pelo qual será enviado o dado
+    headers = { "Content-Type": "application/json" };
+
+    page = {
+       method: "POST",
+       body: JSON.stringify(body),
+       headers
+    }
+
+    try {
+      const response = await fetch(URL, page);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      Alert.alert('Dados enviados com sucesso');
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Dados com erro');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text>Projeto TCC - Turma B</Text>
@@ -42,6 +74,7 @@ export default function App() {
           <>
             <Button title="Buscar Dados" onPress={fetchData} />
             <Button title="Limpar Dados" onPress={() => setData([])} />
+              <Button title="Gravar Dados" onPress={postData} />
           </>
         )}
         {data &&
